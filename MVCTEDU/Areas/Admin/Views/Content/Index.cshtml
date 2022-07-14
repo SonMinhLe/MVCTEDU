@@ -1,0 +1,66 @@
+﻿@model PagedList.IPagedList<Models.EF.Content>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Quản lý tin tức";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section jsFooter
+{
+    
+}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Danh sách tin tức</h1>
+
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+       
+        <div class="card-body">
+            <div class="table-responsive">
+                @Html.ActionLink("Thêm mới", "Create", "Content")
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Tiêu đề</th>
+                            <th>Hình ảnh</th>
+                            <th>Ngày đăng</th>                           
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID">
+
+                                <td>@item.Name</td>
+                                <td>@item.Image</td>
+                                <td>@item.CreatedDate</td>
+                                <td><a href="#" class="btn-active" data-id="@item.ID">@Html.Raw(item.Status ? "<strong>Kích hoạt</strong>" : "Khoá")</a></td>
+                                <td>
+                                    <a href="/Admin/Content/Edit/@item.ID">Sửa</a>
+                                    |
+                                    @Ajax.ActionLink("Xoá", "Delete", new { @id = item.ID }, new AjaxOptions
+                               {
+                                   Confirm = "Bạn có muốn xoá bản ghi này?",
+                                   OnComplete = "$('#row_" + @item.ID + "').remove()",
+                                   HttpMethod = "Delete"
+                               })
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.searchString }))
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- End of Main Content -->
